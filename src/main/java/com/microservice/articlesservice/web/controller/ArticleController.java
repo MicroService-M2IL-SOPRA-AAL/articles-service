@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.microservice.articlesservice.dao.ArticleDao;
 import com.microservice.articlesservice.model.Article;
+import com.microservice.articlesservice.web.exceptions.ArticleIntrouvableException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
@@ -31,8 +32,8 @@ public class ArticleController {
 
     //Récupérer un article par son Id
     @GetMapping(value = "/Articles/{id}")
-    public ResponseEntity<Article> afficherUnArticle(@PathVariable int id) {
-        return ResponseEntity.of(articleDao.findById(id));
+    public Article afficherUnArticle(@PathVariable int id) {
+        return articleDao.findById(id).orElseThrow(() -> new ArticleIntrouvableException("L'article avec l'id " + id + " est INTROUVABLE"));
     }
 
     //ajouter un article
