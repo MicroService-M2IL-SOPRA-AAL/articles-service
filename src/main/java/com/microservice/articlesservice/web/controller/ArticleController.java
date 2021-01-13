@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.microservice.articlesservice.dao.ArticleDao;
 import com.microservice.articlesservice.model.Article;
 import com.microservice.articlesservice.web.exceptions.ArticleIntrouvableException;
+import com.microservice.articlesservice.web.exceptions.ArticlePrixEgalZeroException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class ArticleController {
     @GetMapping(value = "/Articles")
     public MappingJacksonValue listeArticles() {
         List<Article> articles = articleDao.findAll();
-        SimpleBeanPropertyFilter monFiltre = SimpleBeanPropertyFilter.serializeAllExcept("prixAchat");
+        SimpleBeanPropertyFilter monFiltre = SimpleBeanPropertyFilter.serializeAllExcept("prixAchat", "marge");
         FilterProvider listDeNosFiltres = new SimpleFilterProvider().addFilter("myDynamicFilter", monFiltre);
         MappingJacksonValue articlesFiltres = new MappingJacksonValue(articles);
         articlesFiltres.setFilters(listDeNosFiltres);
@@ -45,6 +46,8 @@ public class ArticleController {
     @ApiOperation(value = "Permet de créer un article !")
     @PostMapping(value = "/Articles")
     public ResponseEntity<Void> ajouterArticle(@RequestBody Article article) {
+        if (article.getPrix() == 0)
+            throw new ArticlePrixEgalZeroException("Impossible de créer cet article, son prix est égal à 0");
         Article articleAdded = articleDao.save(article);
 
         URI location = ServletUriComponentsBuilder
@@ -65,5 +68,27 @@ public class ArticleController {
     @PutMapping(value = "/Articles/{id}")
     public void updateArticle(@RequestBody Article article) {
         articleDao.save(article);
+    }
+
+    @ApiOperation(value = "Récupère la liste des articles avec leur prix d'achat et leur marge")
+    @GetMapping(value = "/Articles/AdminArticles")
+    public MappingJacksonValue calculerMargeArticle() {
+        List<Article> articles = articleDao.findAll();
+        SimpleBeanPropertyFilter monFiltre = SimpleBeanPropertyFilter.serializeAll();
+        FilterProvider listDeNosFiltres = new SimpleFilterProvider().addFilter("myDynamicFilter", monFiltre);
+        MappingJacksonValue articlesFiltres = new MappingJacksonValue(articles);
+        articlesFiltres.setFilters(listDeNosFiltres);
+        return articlesFiltres;
+    }
+
+    @ApiOperation(value = "Récupère la liste des articles avec leur prix d'achat et leur marge triés par nom (asc)")
+    @GetMapping(value = "/Articles/TriArticles")
+    public MappingJacksonValue trierArticlesParOrdreAlphabetique() {
+        List<Article> articles = articleDao.findAllByOrderByNom();
+        SimpleBeanPropertyFilter monFiltre = SimpleBeanPropertyFilter.serializeAll();
+        FilterProvider listDeNosFiltres = new SimpleFilterProvider().addFilter("myDynamicFilter", monFiltre);
+        MappingJacksonValue articlesFiltres = new MappingJacksonValue(articles);
+        articlesFiltres.setFilters(listDeNosFiltres);
+        return articlesFiltres;
     }
 }
