@@ -1,9 +1,14 @@
 package com.microservice.articlesservice.model;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
-@JsonFilter("myDynamicFilter")
+@Entity
+//@JsonFilter("myDynamicFilter")
 public class Article {
+    @Id
+    @GeneratedValue
     private int id;
     private String nom;
     private int prix;
