@@ -8,7 +8,7 @@ import javax.persistence.Id;
 //@JsonFilter("myDynamicFilter")
 public class Article {
     @Id
-    @GeneratedValue
+//    @GeneratedValue
     private int id;
     private String nom;
     private int prix;
@@ -19,6 +19,9 @@ public class Article {
         this.nom = nom;
         this.prix = prix;
         this.prixAchat = prixAchat;
+    }
+
+    public Article() {
     }
 
     public int getId() {

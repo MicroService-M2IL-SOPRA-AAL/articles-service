@@ -1,13 +1,9 @@
 package com.microservice.articlesservice.dao;
 
 import com.microservice.articlesservice.model.Article;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
-public interface ArticleDao {
-    List<Article> findAll();
-
-    Article findById(int id);
-
-    Article save(Article article);
+@Repository
+public interface ArticleDao extends JpaRepository<Article, Integer> {
 }

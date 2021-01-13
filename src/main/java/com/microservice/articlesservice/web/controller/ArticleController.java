@@ -31,16 +31,14 @@ public class ArticleController {
 
     //Récupérer un article par son Id
     @GetMapping(value = "/Articles/{id}")
-    public Article afficherUnArticle(@PathVariable int id) {
-        return articleDao.findById(id);
+    public ResponseEntity<Article> afficherUnArticle(@PathVariable int id) {
+        return ResponseEntity.of(articleDao.findById(id));
     }
 
     //ajouter un article
     @PostMapping(value = "/Articles")
     public ResponseEntity<Void> ajouterArticle(@RequestBody Article article) {
         Article articleAdded = articleDao.save(article);
-        if (articleAdded == null)
-            return ResponseEntity.noContent().build();
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -48,5 +46,15 @@ public class ArticleController {
                 .buildAndExpand(articleAdded.getId())
                 .toUri();
         return ResponseEntity.created(location).build();
+    }
+
+    @DeleteMapping(value = "/Articles/{id}")
+    public void supprimerArticle(@PathVariable int id) {
+        articleDao.deleteById(id);
+    }
+
+    @PutMapping(value = "/Articles")
+    public void updateArticle(@RequestBody Article article) {
+        articleDao.save(article);
     }
 }
