@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.microservice.articlesservice.dao.ArticleDao;
 import com.microservice.articlesservice.model.Article;
 import com.microservice.articlesservice.web.exceptions.ArticleIntrouvableException;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
@@ -16,10 +18,12 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
+@Api(value = "API pour les opérations CRUD sur les articles")
 public class ArticleController {
     @Autowired
     private ArticleDao articleDao;
 
+    @ApiOperation(value = "Récupère la liste des articles !")
     @GetMapping(value = "/Articles")
     public MappingJacksonValue listeArticles() {
         List<Article> articles = articleDao.findAll();
@@ -31,12 +35,14 @@ public class ArticleController {
     }
 
     //Récupérer un article par son Id
+    @ApiOperation(value = "Récupère un article grâce à son ID à condition que celui-ci soit en stock !")
     @GetMapping(value = "/Articles/{id}")
     public Article afficherUnArticle(@PathVariable int id) {
         return articleDao.findById(id).orElseThrow(() -> new ArticleIntrouvableException("L'article avec l'id " + id + " est INTROUVABLE"));
     }
 
     //ajouter un article
+    @ApiOperation(value = "Permet de créer un article !")
     @PostMapping(value = "/Articles")
     public ResponseEntity<Void> ajouterArticle(@RequestBody Article article) {
         Article articleAdded = articleDao.save(article);
@@ -49,12 +55,14 @@ public class ArticleController {
         return ResponseEntity.created(location).build();
     }
 
+    @ApiOperation(value = "Permet de supprimer un article via son ID !")
     @DeleteMapping(value = "/Articles/{id}")
     public void supprimerArticle(@PathVariable int id) {
         articleDao.deleteById(id);
     }
 
-    @PutMapping(value = "/Articles")
+    @ApiOperation(value = "Permet de mettre à jour un article via son ID !")
+    @PutMapping(value = "/Articles/{id}")
     public void updateArticle(@RequestBody Article article) {
         articleDao.save(article);
     }
