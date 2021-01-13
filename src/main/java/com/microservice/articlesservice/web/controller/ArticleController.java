@@ -3,9 +3,7 @@ package com.microservice.articlesservice.web.controller;
 import com.microservice.articlesservice.dao.ArticleDao;
 import com.microservice.articlesservice.model.Article;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,5 +21,11 @@ public class ArticleController {
     @GetMapping(value = "/Articles/{id}")
     public Article afficherUnArticle(@PathVariable int id) {
         return articleDao.findById(id);
+    }
+
+    // Ajouter un article
+    @PostMapping(value = "/Articles")
+    public void ajouterArticle(@RequestBody Article article) {
+        articleDao.save(article);
     }
 }
