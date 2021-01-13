@@ -12,9 +12,9 @@ public class ArticleDaoImpl implements ArticleDao {
     public static List<Article> articles = new ArrayList<>();
 
     static {
-        articles.add(new Article(1, "Ordinateur portable", 350));
-        articles.add(new Article(2, "Aspirateur Robot", 500));
-        articles.add(new Article(3, "Table de Ping Pong", 750));
+        articles.add(new Article(1, "Ordinateur portable", 350, 250));
+        articles.add(new Article(2, "Aspirateur Robot", 500, 200));
+        articles.add(new Article(3, "Table de Ping Pong", 750, 500));
     }
 
     @Override

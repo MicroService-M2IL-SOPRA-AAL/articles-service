@@ -1,14 +1,19 @@
 package com.microservice.articlesservice.model;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
+
+@JsonFilter("myDynamicFilter")
 public class Article {
     private int id;
     private String nom;
     private int prix;
+    private int prixAchat;
 
-    public Article(int id, String nom, int prix) {
+    public Article(int id, String nom, int prix, int prixAchat) {
         this.id = id;
         this.nom = nom;
         this.prix = prix;
+        this.prixAchat = prixAchat;
     }
 
     public int getId() {
@@ -35,12 +40,21 @@ public class Article {
         this.prix = prix;
     }
 
+    public int getPrixAchat() {
+        return prixAchat;
+    }
+
+    public void setPrixAchat(int prixAchat) {
+        this.prixAchat = prixAchat;
+    }
+
     @Override
     public String toString() {
         return "Article{" +
                 "id=" + id +
                 ", nom='" + nom + '\'' +
-                ", prix=" + prix +
+                ", prix=" + prix + '\'' +
+                ", prixAchat=" + prixAchat +
                 '}';
     }
 }
