@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonFilter;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Transient;
 
 @Entity
 @JsonFilter("myDynamicFilter")
@@ -16,8 +15,6 @@ public class Article {
     private String nom;
     private int prix;
     private int prixAchat;
-    @Transient
-    private int marge;
 
     public Article(int id, String nom, int prix, int prixAchat) {
         this.id = id;
@@ -59,10 +56,6 @@ public class Article {
 
     public void setPrixAchat(int prixAchat) {
         this.prixAchat = prixAchat;
-    }
-
-    public int getMarge() {
-        return prix - prixAchat;
     }
 
     @Override

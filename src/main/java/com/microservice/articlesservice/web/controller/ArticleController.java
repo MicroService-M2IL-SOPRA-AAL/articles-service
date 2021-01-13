@@ -17,6 +17,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @RestController
 @Api(value = "API pour les opérations CRUD sur les articles")
@@ -28,7 +31,7 @@ public class ArticleController {
     @GetMapping(value = "/Articles")
     public MappingJacksonValue listeArticles() {
         List<Article> articles = articleDao.findAll();
-        SimpleBeanPropertyFilter monFiltre = SimpleBeanPropertyFilter.serializeAllExcept("prixAchat", "marge");
+        SimpleBeanPropertyFilter monFiltre = SimpleBeanPropertyFilter.serializeAllExcept("prixAchat");
         FilterProvider listDeNosFiltres = new SimpleFilterProvider().addFilter("myDynamicFilter", monFiltre);
         MappingJacksonValue articlesFiltres = new MappingJacksonValue(articles);
         articlesFiltres.setFilters(listDeNosFiltres);
@@ -70,18 +73,15 @@ public class ArticleController {
         articleDao.save(article);
     }
 
-    @ApiOperation(value = "Récupère la liste des articles avec leur prix d'achat et leur marge")
+    @ApiOperation(value = "Retourne la marge de chaque produit")
     @GetMapping(value = "/Articles/AdminArticles")
-    public MappingJacksonValue calculerMargeArticle() {
-        List<Article> articles = articleDao.findAll();
-        SimpleBeanPropertyFilter monFiltre = SimpleBeanPropertyFilter.serializeAll();
-        FilterProvider listDeNosFiltres = new SimpleFilterProvider().addFilter("myDynamicFilter", monFiltre);
-        MappingJacksonValue articlesFiltres = new MappingJacksonValue(articles);
-        articlesFiltres.setFilters(listDeNosFiltres);
-        return articlesFiltres;
+    public Map<Article, Integer> calculerMargeArticle() {
+        return articleDao.findAll()
+                .stream()
+                .collect(Collectors.toMap(Function.identity(), article -> article.getPrix() - article.getPrixAchat()));
     }
 
-    @ApiOperation(value = "Récupère la liste des articles avec leur prix d'achat et leur marge triés par nom (asc)")
+    @ApiOperation(value = "Récupère la liste des articles triés par nom (asc)")
     @GetMapping(value = "/Articles/TriArticles")
     public MappingJacksonValue trierArticlesParOrdreAlphabetique() {
         List<Article> articles = articleDao.findAllByOrderByNom();
